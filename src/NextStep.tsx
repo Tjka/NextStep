@@ -5,6 +5,7 @@ import React from 'react';
 import { NextStepProps } from './types';
 import NextStepReact from './NextStepReact';
 import { useNextAdapter } from './adapters/next';
+import { ResponsiveNextStep } from './ResponsiveNextStep';
 
 /**
  * NextStep component for managing onboarding flow. It must be used within a NextStepProvider.
@@ -51,7 +52,7 @@ const NextStep: React.FC<NextStepProps> = ({
   noInViewScroll = false,
 }) => {
   return (
-    <NextStepReact
+    <ResponsiveNextStep
       children={children}
       steps={steps}
       shadowRgb={shadowRgb}

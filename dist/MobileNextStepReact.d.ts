@@ -1,14 +1,12 @@
-'use client';
-import { jsx as _jsx } from "react/jsx-runtime";
-import { useNextAdapter } from './adapters/next';
-import { ResponsiveNextStep } from './ResponsiveNextStep';
+import React from 'react';
+import { NextStepProps } from './types';
 /**
- * NextStep component for managing onboarding flow. It must be used within a NextStepProvider.
+ * NextStepReact component for rendering the onboarding steps.
  *
- * This component provides a guided experience for users through a series of steps.
- * It allows customization of the card component and provides callbacks for various events.
+ * This component handles the display of the onboarding steps, including the card and pointer.
+ * It manages the visibility of the onboarding overlay and handles navigation between steps.
  *
- * @param {React.ReactNode} children - The content to be displayed within the step.
+ * @param {React.ReactNode} children - The content to be displayed within the onboarding context.
  * @param {Array} steps - An array of steps to be displayed, each containing information for the onboarding process.
  * @param {string} [shadowRgb='0, 0, 0'] - The RGB value for the shadow effect surrounding the target area (default: '0, 0, 0').
  * @param {string} [shadowOpacity='0.2'] - The opacity of the shadow effect (default: '0.2').
@@ -20,15 +18,21 @@ import { ResponsiveNextStep } from './ResponsiveNextStep';
  * @param {function} [onSkip] - Callback function triggered when the user skips the onboarding process (default: () => {}).
  * @param {boolean} [displayArrow=true] - Flag to display navigation arrows in the onboarding steps (default: true).
  * @param {boolean} [clickThroughOverlay=false] - Flag to enable click-through on the overlay, allowing interaction with underlying elements (default: false).
- * @param {function} [navigationAdapter=useNextAdapter] - Custom navigation adapter function for routing (default: useNextAdapter).
+ * @param {function} [navigationAdapter=useWindowAdapter] - Custom navigation adapter function for routing (default: useWindowAdapter).
  * @param {boolean} [disableConsoleLogs=false] - Flag to disable console logs for debugging purposes (default: false).
  * @param {boolean} [scrollToTop=true] - Flag to scroll to the top of the page when the onboarding process ends (default: true).
  * @param {boolean} [noInViewScroll=false] - Flag to disable scrolling to the target element when it comes into view (default: false).
  *
- * @returns {JSX.Element} The rendered NextStep component.
+ * @returns {JSX.Element} The rendered NextStepReact component.
  *
+ * @example
+ * <NextStepReact
+ *   steps={steps}
+ *   onStart={() => console.log('Tour started')}
+ *   onComplete={() => console.log('Tour completed')}
+ * >
+ *   <YourAppContent />
+ * </NextStepReact>
  */
-const NextStep = ({ children, steps, shadowRgb = '0, 0, 0', shadowOpacity = '0.2', cardTransition = { ease: 'anticipate', duration: 0.6 }, cardComponent: CardComponent, onStart = () => { }, onStepChange = () => { }, onComplete = () => { }, onSkip = () => { }, displayArrow = true, clickThroughOverlay = false, navigationAdapter = useNextAdapter, disableConsoleLogs = false, scrollToTop = true, noInViewScroll = false, }) => {
-    return (_jsx(ResponsiveNextStep, { children: children, steps: steps, shadowRgb: shadowRgb, shadowOpacity: shadowOpacity, cardTransition: cardTransition, cardComponent: CardComponent, onStart: onStart, onStepChange: onStepChange, onComplete: onComplete, onSkip: onSkip, displayArrow: displayArrow, clickThroughOverlay: clickThroughOverlay, navigationAdapter: navigationAdapter, disableConsoleLogs: disableConsoleLogs, scrollToTop: scrollToTop, noInViewScroll: noInViewScroll }));
-};
-export default NextStep;
+declare const MobileNextStepReact: React.FC<NextStepProps>;
+export default MobileNextStepReact;
