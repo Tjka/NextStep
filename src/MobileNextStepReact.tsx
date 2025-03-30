@@ -84,6 +84,14 @@ const MobileNextStepReact: React.FC<NextStepProps> = ({
 
   const router = navigationAdapter();
 
+  // Create a default empty step with required properties
+  const defaultStep = {
+    icon: '',
+    title: '',
+    content: '',
+    selector: '',
+  };
+
   // - -
   // Handle pop state
   const handlePopState = useCallback(() => {
@@ -937,6 +945,55 @@ const MobileNextStepReact: React.FC<NextStepProps> = ({
     [navigationAdapter, handleNavigation],
   );
 
+  // Function to calculate the vertical position of the tooltip
+  const getTooltipVerticalPosition = () => {
+    if (!pointerPosition || !currentTourSteps?.[currentStep]) {
+      return {
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      };
+    }
+
+    const side = currentTourSteps[currentStep].side || 'bottom';
+    
+    // Get the anchor element's vertical position
+    const anchorTop = pointerPosition.y;
+    const anchorBottom = pointerPosition.y + pointerPosition.height;
+    const anchorHeight = pointerPosition.height;
+    
+    // Calculate screen height and safe margins
+    const screenHeight = window.innerHeight;
+    const safeMargin = 20; // Margin from the edge of the screen
+    
+    if (side === 'top' || side?.includes('top')) {
+      // Position the tooltip above the anchor element
+      // Check if there's enough space above
+      if (anchorTop > 200) { // Minimum space needed for the tooltip
+        return {
+          bottom: `${screenHeight - anchorTop + safeMargin}px`,
+          top: 'auto',
+          transform: 'translateX(-50%)',
+        };
+      }
+    }
+    
+    // Default or 'bottom' side - position below the anchor
+    // Check if there's enough space below
+    if (screenHeight - anchorBottom > 200) {
+      return {
+        top: `${anchorBottom + safeMargin}px`,
+        bottom: 'auto',
+        transform: 'translateX(-50%)',
+      };
+    }
+    
+    // If there's not enough space either above or below, center it vertically
+    return {
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+    };
+  };
+
   return (
     <div
       data-name="nextstep-wrapper"
@@ -1079,48 +1136,42 @@ const MobileNextStepReact: React.FC<NextStepProps> = ({
             {/* Card - now a sibling of the pointer instead of a child */}
             <motion.div
               data-name="nextstep-card"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={cardTransition}
               style={{
-                ...getCardStyle(currentTourSteps?.[currentStep]?.side as any),
-                position: isSmallScreen() ? 'fixed' : 'absolute',
+                position: 'fixed',
+                left: '50%',
+                ...getTooltipVerticalPosition(),
                 display: 'flex',
                 flexDirection: 'column',
-                maxWidth: '100%',
+                maxWidth: '90vw',
+                width: 'auto',
                 minWidth: 'min-content',
                 pointerEvents: 'auto',
-                zIndex: 999,
+                zIndex: 1000,
+                boxSizing: 'border-box',
+                margin: '0',
               }}
             >
               {CardComponent ? (
                 <CardComponent
-                  step={currentTourSteps?.[currentStep]!}
+                  step={currentTourSteps?.[currentStep] || defaultStep}
                   currentStep={currentStep}
                   totalSteps={currentTourSteps?.length ?? 0}
                   nextStep={nextStep}
                   prevStep={prevStep}
-                  arrow={
-                    <CardArrow
-                      isVisible={
-                        !!(currentTourSteps?.[currentStep]?.selector && displayArrow && !isSmallScreen())
-                      }
-                    />
-                  }
+                  arrow={null} // No arrow for mobile
                   skipTour={skipTour}
                 />
               ) : (
                 <DefaultCard
-                  step={currentTourSteps?.[currentStep]!}
+                  step={currentTourSteps?.[currentStep] || defaultStep}
                   currentStep={currentStep}
                   totalSteps={currentTourSteps?.length ?? 0}
                   nextStep={nextStep}
                   prevStep={prevStep}
-                  arrow={
-                    <CardArrow
-                      isVisible={
-                        !!(currentTourSteps?.[currentStep]?.selector && displayArrow && !isSmallScreen())
-                      }
-                    />
-                  }
+                  arrow={null} // No arrow for mobile
                   skipTour={skipTour}
                 />
               )}

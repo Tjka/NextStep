@@ -54,6 +54,13 @@ const MobileNextStepReact = ({ children, steps, shadowRgb = '0, 0, 0', shadowOpa
     const [viewportRect, setViewportRect] = useState(null);
     const [scrollableParent, setScrollableParent] = useState(null);
     const router = navigationAdapter();
+    // Create a default empty step with required properties
+    const defaultStep = {
+        icon: '',
+        title: '',
+        content: '',
+        selector: '',
+    };
     // - -
     // Handle pop state
     const handlePopState = useCallback(() => {
@@ -816,6 +823,48 @@ const MobileNextStepReact = ({ children, steps, shadowRgb = '0, 0, 0', shadowOpa
         push: handleNavigation,
         getCurrentPath: () => '/',
     }, [navigationAdapter, handleNavigation]);
+    // Function to calculate the vertical position of the tooltip
+    const getTooltipVerticalPosition = () => {
+        if (!pointerPosition || !currentTourSteps?.[currentStep]) {
+            return {
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+            };
+        }
+        const side = currentTourSteps[currentStep].side || 'bottom';
+        // Get the anchor element's vertical position
+        const anchorTop = pointerPosition.y;
+        const anchorBottom = pointerPosition.y + pointerPosition.height;
+        const anchorHeight = pointerPosition.height;
+        // Calculate screen height and safe margins
+        const screenHeight = window.innerHeight;
+        const safeMargin = 20; // Margin from the edge of the screen
+        if (side === 'top' || side?.includes('top')) {
+            // Position the tooltip above the anchor element
+            // Check if there's enough space above
+            if (anchorTop > 200) { // Minimum space needed for the tooltip
+                return {
+                    bottom: `${screenHeight - anchorTop + safeMargin}px`,
+                    top: 'auto',
+                    transform: 'translateX(-50%)',
+                };
+            }
+        }
+        // Default or 'bottom' side - position below the anchor
+        // Check if there's enough space below
+        if (screenHeight - anchorBottom > 200) {
+            return {
+                top: `${anchorBottom + safeMargin}px`,
+                bottom: 'auto',
+                transform: 'translateX(-50%)',
+            };
+        }
+        // If there's not enough space either above or below, center it vertically
+        return {
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+        };
+    };
     return (_jsxs("div", { "data-name": "nextstep-wrapper", "data-nextstep": "dev", style: { position: 'relative', width: '100%' }, children: [_jsx("div", { "data-name": "nextstep-site", style: { display: 'block', width: '100%' }, children: children }), pointerPosition && isNextStepVisible && viewport && (_jsx(DynamicPortal, { viewportID: currentTourSteps?.[currentStep]?.viewportID, children: _jsxs(motion.div, { "data-name": "nextstep-overlay", initial: "hidden", animate: isNextStepVisible ? 'visible' : 'hidden', variants: variants, transition: { duration: 0.5 }, style: {
                         position: 'absolute',
                         top: 0,
@@ -881,16 +930,20 @@ const MobileNextStepReact = ({ children, steps, shadowRgb = '0, 0, 0', shadowOpa
                                     width: pointerPosition.width + pointerPadding,
                                     height: pointerPosition.height + pointerPadding,
                                 }
-                                : {}, transition: cardTransition }), _jsx(motion.div, { "data-name": "nextstep-card", transition: cardTransition, style: {
-                                ...getCardStyle(currentTourSteps?.[currentStep]?.side),
-                                position: isSmallScreen() ? 'fixed' : 'absolute',
+                                : {}, transition: cardTransition }), _jsx(motion.div, { "data-name": "nextstep-card", initial: { opacity: 0 }, animate: { opacity: 1 }, transition: cardTransition, style: {
+                                position: 'fixed',
+                                left: '50%',
+                                ...getTooltipVerticalPosition(),
                                 display: 'flex',
                                 flexDirection: 'column',
-                                maxWidth: '100%',
+                                maxWidth: '90vw',
+                                width: 'auto',
                                 minWidth: 'min-content',
                                 pointerEvents: 'auto',
-                                zIndex: 999,
-                            }, children: CardComponent ? (_jsx(CardComponent, { step: currentTourSteps?.[currentStep], currentStep: currentStep, totalSteps: currentTourSteps?.length ?? 0, nextStep: nextStep, prevStep: prevStep, arrow: _jsx(CardArrow, { isVisible: !!(currentTourSteps?.[currentStep]?.selector && displayArrow && !isSmallScreen()) }), skipTour: skipTour })) : (_jsx(DefaultCard, { step: currentTourSteps?.[currentStep], currentStep: currentStep, totalSteps: currentTourSteps?.length ?? 0, nextStep: nextStep, prevStep: prevStep, arrow: _jsx(CardArrow, { isVisible: !!(currentTourSteps?.[currentStep]?.selector && displayArrow && !isSmallScreen()) }), skipTour: skipTour })) })] }) })), pointerPosition &&
+                                zIndex: 1000,
+                                boxSizing: 'border-box',
+                                margin: '0',
+                            }, children: CardComponent ? (_jsx(CardComponent, { step: currentTourSteps?.[currentStep] || defaultStep, currentStep: currentStep, totalSteps: currentTourSteps?.length ?? 0, nextStep: nextStep, prevStep: prevStep, arrow: null, skipTour: skipTour })) : (_jsx(DefaultCard, { step: currentTourSteps?.[currentStep] || defaultStep, currentStep: currentStep, totalSteps: currentTourSteps?.length ?? 0, nextStep: nextStep, prevStep: prevStep, arrow: null, skipTour: skipTour })) })] }) })), pointerPosition &&
                 isNextStepVisible &&
                 currentTourSteps?.[currentStep]?.viewportID &&
                 scrollableParent && (_jsx(DynamicPortal, { children: _jsx(motion.div, { "data-name": "nextstep-overlay2", initial: "hidden", animate: isNextStepVisible ? 'visible' : 'hidden', variants: variants, transition: { duration: 0.5 }, style: {
