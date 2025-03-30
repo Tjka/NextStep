@@ -10,6 +10,13 @@ const DefaultCard: React.FC<CardComponentProps> = ({
   skipTour,
   arrow,
 }) => {
+  // Determine button visibility with new granular controls
+  // If showControls is false, hide all buttons regardless of individual settings
+  // Otherwise, check individual button settings (defaulting to true if not specified)
+  const showPreviousButton = step.showControls !== false && (step.showPrevious !== false);
+  const showNextButton = step.showControls !== false && (step.showNext !== false);
+  const showSkipButton = step.showSkip;
+
   return (
     <div
       style={{
@@ -72,7 +79,7 @@ const DefaultCard: React.FC<CardComponentProps> = ({
             backgroundColor: '#F3F4F6',
             borderRadius: '0.375rem',
             cursor: 'pointer',
-            display: step.showControls ? 'block' : 'none',
+            display: showPreviousButton ? 'block' : 'none',
           }}
           disabled={currentStep === 0}
         >
@@ -91,7 +98,7 @@ const DefaultCard: React.FC<CardComponentProps> = ({
               backgroundColor: '#10B981',
               borderRadius: '0.375rem',
               cursor: 'pointer',
-              display: step.showControls ? 'block' : 'none',
+              display: showNextButton ? 'block' : 'none',
             }}
           >
             Finish
@@ -106,7 +113,7 @@ const DefaultCard: React.FC<CardComponentProps> = ({
               backgroundColor: '#2563EB',
               borderRadius: '0.375rem',
               cursor: 'pointer',
-              display: step.showControls ? 'block' : 'none',
+              display: showNextButton ? 'block' : 'none',
             }}
           >
             Next
@@ -129,7 +136,7 @@ const DefaultCard: React.FC<CardComponentProps> = ({
             backgroundColor: '#F3F4F6',
             borderRadius: '0.375rem',
             cursor: 'pointer',
-            display: step.showSkip ? 'block' : 'none',
+            display: showSkipButton ? 'block' : 'none',
           }}
         >
           Skip Tour

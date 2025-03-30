@@ -33,6 +33,8 @@ export interface Step {
     | 'right-top'
     | 'right-bottom';
   showControls?: boolean;
+  showPrevious?: boolean;
+  showNext?: boolean;
   showSkip?: boolean;
   blockKeyboardControl?: boolean;
   pointerPadding?: number;

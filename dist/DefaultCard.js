@@ -1,5 +1,11 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 const DefaultCard = ({ step, currentStep, totalSteps, nextStep, prevStep, skipTour, arrow, }) => {
+    // Determine button visibility with new granular controls
+    // If showControls is false, hide all buttons regardless of individual settings
+    // Otherwise, check individual button settings (defaulting to true if not specified)
+    const showPreviousButton = step.showControls !== false && (step.showPrevious !== false);
+    const showNextButton = step.showControls !== false && (step.showNext !== false);
+    const showSkipButton = step.showSkip;
     return (_jsxs("div", { style: {
             backgroundColor: 'white',
             borderRadius: '0.5rem',
@@ -35,7 +41,7 @@ const DefaultCard = ({ step, currentStep, totalSteps, nextStep, prevStep, skipTo
                             backgroundColor: '#F3F4F6',
                             borderRadius: '0.375rem',
                             cursor: 'pointer',
-                            display: step.showControls ? 'block' : 'none',
+                            display: showPreviousButton ? 'block' : 'none',
                         }, disabled: currentStep === 0, children: "Previous" }), _jsxs("span", { style: { color: '#6B7280', whiteSpace: 'nowrap' }, children: [currentStep + 1, " of ", totalSteps] }), currentStep === totalSteps - 1 ? (_jsx("button", { onClick: skipTour, style: {
                             padding: '0.5rem 1rem',
                             fontWeight: '500',
@@ -43,7 +49,7 @@ const DefaultCard = ({ step, currentStep, totalSteps, nextStep, prevStep, skipTo
                             backgroundColor: '#10B981',
                             borderRadius: '0.375rem',
                             cursor: 'pointer',
-                            display: step.showControls ? 'block' : 'none',
+                            display: showNextButton ? 'block' : 'none',
                         }, children: "Finish" })) : (_jsx("button", { onClick: nextStep, style: {
                             padding: '0.5rem 1rem',
                             fontWeight: '500',
@@ -51,7 +57,7 @@ const DefaultCard = ({ step, currentStep, totalSteps, nextStep, prevStep, skipTo
                             backgroundColor: '#2563EB',
                             borderRadius: '0.375rem',
                             cursor: 'pointer',
-                            display: step.showControls ? 'block' : 'none',
+                            display: showNextButton ? 'block' : 'none',
                         }, children: "Next" }))] }), arrow, skipTour && currentStep < totalSteps - 1 && (_jsx("button", { onClick: skipTour, style: {
                     marginTop: '1rem',
                     fontSize: '0.75rem',
@@ -62,7 +68,7 @@ const DefaultCard = ({ step, currentStep, totalSteps, nextStep, prevStep, skipTo
                     backgroundColor: '#F3F4F6',
                     borderRadius: '0.375rem',
                     cursor: 'pointer',
-                    display: step.showSkip ? 'block' : 'none',
+                    display: showSkipButton ? 'block' : 'none',
                 }, children: "Skip Tour" }))] }));
 };
 export default DefaultCard;

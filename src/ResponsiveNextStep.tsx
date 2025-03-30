@@ -21,7 +21,7 @@ const ResponsiveNextStep: React.FC<NextStepProps> = (props) => {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-console.log(!isClient)
+
   // During server-side rendering, default to desktop version
   if (!isClient) {
     return <NextStepReact {...props} />;
